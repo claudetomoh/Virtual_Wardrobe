@@ -47,7 +47,7 @@ if ($appEnv === 'production') {
     ini_set('display_errors', '1');
 }
 
-define('APP_BASE_PATH', rtrim(getenv('APP_BASE_PATH') ?: '/Virtual_Wardrobe', '/'));
+define('APP_BASE_PATH', rtrim(getenv('APP_BASE_PATH') ?: '/~tomoh.ikfingeh/Virtual_Wardrobe', '/'));
 define('APP_ENV', $appEnv);
 
 // Table name prefix (for shared hosting to avoid conflicts)
