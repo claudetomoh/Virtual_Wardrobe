@@ -1,0 +1,13 @@
+node_modules
+.git
+.github
+vendor
+*.log
+test-results
+public/uploads
+docker/**/node_modules
+docker/**/vendor
+*.tar
+*.zip
+build
+dist

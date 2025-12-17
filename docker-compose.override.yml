@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  php:
+    volumes:
+      - ./:/var/www/html:delegated
+  node:
+    volumes:
+      - ./node/socket-server:/app:delegated
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3001:3001"
+    command: sh -c "npm install && npm start"

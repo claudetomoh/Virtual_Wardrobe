@@ -1,0 +1,44 @@
+# Environment and config files
+.env
+.env.local
+.env.production
+
+# Uploaded files
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Session files
+*.pid
+php.pid
+node.pid
+php-process-id
+node-process-id
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+error_log
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# Test results
+test-results/
+playwright-report/
+coverage/

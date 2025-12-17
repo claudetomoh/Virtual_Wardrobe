@@ -1,0 +1,152 @@
+name: Socket Server CI
+
+on:
+  push:
+    paths:
+      - 'node/socket-server/**'
+  pull_request:
+    paths:
+      - 'node/socket-server/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: wardrobe_app
+      APP_BASE_PATH: /Virtual_Wardrobe
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wardrobe_app
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        image: bitnami/redis:latest
+        env:
+          REDIS_PASSWORD: ${{ secrets.SOCKET_REDIS_PASSWORD }}
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Validate CI secrets
+        run: |
+          if [ -z "${{ secrets.SOCKET_API_KEY }}" ]; then echo "SOCKET_API_KEY is not set"; exit 1; fi
+          if [ -z "${{ secrets.SOCKET_JWT_SECRET }}" ]; then echo "SOCKET_JWT_SECRET is not set"; exit 1; fi
+          if [ -z "${{ secrets.SOCKET_REDIS_PASSWORD }}" ]; then echo "SOCKET_REDIS_PASSWORD is not set"; exit 1; fi
+
+      - name: Install dependencies
+        working-directory: node/socket-server
+        run: npm ci
+
+      - name: Start Socket Server (background)
+        working-directory: node/socket-server
+        env:
+          NODE_ENV: 'production'
+          SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+          SOCKET_JWT_SECRET: ${{ secrets.SOCKET_JWT_SECRET }}
+          SOCKET_ALLOWED_ORIGINS: ${{ secrets.SOCKET_ALLOWED_ORIGINS }}
+          SOCKET_REDIS_URL: redis://127.0.0.1:6379
+          SOCKET_REDIS_PASSWORD: ${{ secrets.SOCKET_REDIS_PASSWORD }}
+        run: |
+          npm start > socket-server.log 2>&1 & echo $! > socket.pid
+          echo "Socket server started"
+
+      - name: Wait for server
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/health >/dev/null 2>&1; then
+              echo "server ready"; break;
+            fi
+            echo "waiting for server... ($i)"; sleep 1;
+          done
+
+      - name: Run emit test
+        working-directory: node/socket-server
+        env:
+          SOCKET_SERVER_URL: 'http://localhost:3000'
+          SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+          SOCKET_JWT_SECRET: ${{ secrets.SOCKET_JWT_SECRET }}
+        run: |
+          npm run test-emit -- --user 1 --event planner_update --msg "ci test"
+      - name: Install Playwright browsers
+        working-directory: node/socket-server
+        run: |
+          npx playwright install --with-deps
+      - name: Install PHP & MySQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php php-cli php-curl php-mbstring php-xml php-mysql default-mysql-client
+
+      - name: Initialize DB schema
+        env:
+          MYSQL_PWD: root
+        run: |
+          echo "Initializing DB schema"
+          mysql -h mysql -u root -proot < sql/db_init.sql
+
+      - name: Start PHP built-in server (background)
+        run: |
+          php -S 0.0.0.0:8000 -t . > php-server.log 2>&1 & echo $! > php.pid
+          echo "PHP server started"
+      - name: Seed sample data
+        run: |
+          php src/admin/seed_sample.php
+      - name: Run Playwright E2E
+        working-directory: node/socket-server
+        env:
+          SOCKET_SERVER_URL: 'http://localhost:3000'
+          SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+          SOCKET_JWT_SECRET: ${{ secrets.SOCKET_JWT_SECRET }}
+          APP_URL: 'http://localhost:8080/Virtual_Wardrobe'
+          SOCKET_REDIS_URL: 'redis://127.0.0.1:6379'
+          SOCKET_REDIS_PASSWORD: ${{ secrets.SOCKET_REDIS_PASSWORD }}
+        run: |
+          npm run test-e2e -- --reporter=junit
+      - name: Upload Playwright JUnit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-junit-reports
+          path: node/socket-server/test-results
+      - name: Upload Socket Server Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: socket-server-log
+          path: node/socket-server/socket-server.log
+      - name: Upload Emitter Audit Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emitter-audit-log
+          path: node/socket-server/logs/emitter_audit.log
+      - name: Stop Socket Server
+        if: always()
+        working-directory: node/socket-server
+        run: |
+          if [ -f socket.pid ]; then
+            kill $(cat socket.pid) || true; rm -f socket.pid || true;
+          fi
+      - name: Stop PHP Server
+        if: always()
+        run: |
+          if [ -f php.pid ]; then
+            kill $(cat php.pid) || true; rm -f php.pid || true;
+          fi
