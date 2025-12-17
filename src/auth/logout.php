@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config.php';
 
 // Destroy active session record
 if (isset($_SESSION['user_id'])) {
-    $security->destroyActiveSession($_SESSION['user_id']);
+    // $security->destroyActiveSession($_SESSION['user_id']); // Disabled - table not in schema
     $security->logSecurityEvent('logout', $_SESSION['user_id'], ['ip' => Security::getClientIP()]);
 }
 

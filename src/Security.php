@@ -353,13 +353,11 @@ class Security {
     }
     
     /**
-     * Destroy active session
+     * Destroy active session - DISABLED (table not in schema)
      * @param int $userId
      */
     public function destroyActiveSession($userId) {
-        $sessionId = session_id();
-        $sql = "DELETE FROM active_sessions WHERE user_id = ? AND session_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId, $sessionId]);
+        // Disabled - active_sessions table not in database schema
+        return;
     }
 }
