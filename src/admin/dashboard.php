@@ -442,19 +442,25 @@ include __DIR__ . '/../templates/header.php';
             <h3><i class="fas fa-chart-bar"></i> Category Distribution</h3>
             <div class="chart-container">
                 <?php 
-                $maxCount = max(array_column($categoryStats, 'count'));
-                foreach ($categoryStats as $cat): 
-                    $percentage = ($cat['count'] / $maxCount) * 100;
-                ?>
-                    <div class="chart-bar">
-                        <div class="chart-label"><?= ucfirst(h($cat['category'])) ?></div>
+                if (!empty($categoryStats)) {
+                    $maxCount = max(array_column($categoryStats, 'count'));
+                    foreach ($categoryStats as $cat): 
+                        $percentage = ($cat['count'] / $maxCount) * 100;
+                    ?>
+                        <div class="chart-bar">
+                            <div class="chart-label"><?= ucfirst(h($cat['category'])) ?></div>
                         <div class="chart-bar-bg">
                             <div class="chart-bar-fill" style="width: <?= $percentage ?>%">
                                 <?= $cat['count'] ?>
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                <?php 
+                    endforeach;
+                } else {
+                    echo '<p style="color: rgba(226, 232, 240, 0.6); text-align: center; padding: 2rem;">No clothing items yet. Users need to upload items to see category distribution.</p>';
+                }
+                ?>
             </div>
         </div>
 
