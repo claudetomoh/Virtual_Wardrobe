@@ -3,22 +3,22 @@ require_once __DIR__ . '/config.php';
 requireLogin();
 
 // Check if user is admin
-$roleStmt = $pdo->prepare('SELECT role FROM '. TBL_USERS .' WHERE id = ?');
+$roleStmt = $pdo->prepare('SELECT role FROM ' . TBL_USERS . ' WHERE id = ?');
 $roleStmt->execute([$_SESSION['user_id']]);
 $userRole = $roleStmt->fetchColumn();
 $isAdmin = ($userRole === 'admin');
 
 // Wardrobe summary
-$itemStmt = $pdo->prepare('SELECT COUNT(*) FROM '. TBL_CLOTHES .' WHERE user_id = ?');
+$itemStmt = $pdo->prepare('SELECT COUNT(*) FROM ' . TBL_CLOTHES . ' WHERE user_id = ?');
 $itemStmt->execute([$_SESSION['user_id']]);
 $clothesCount = (int) $itemStmt->fetchColumn();
 
-$outfitStmt = $pdo->prepare('SELECT COUNT(*) FROM '. TBL_OUTFITS .' WHERE user_id = ?');
+$outfitStmt = $pdo->prepare('SELECT COUNT(*) FROM ' . TBL_OUTFITS . ' WHERE user_id = ?');
 $outfitStmt->execute([$_SESSION['user_id']]);
 $outfitCount = (int) $outfitStmt->fetchColumn();
 
 // Category stats
-$catStmt = $pdo->prepare('SELECT category, COUNT(*) AS cnt FROM '. TBL_CLOTHES .' WHERE user_id = ? GROUP BY category');
+$catStmt = $pdo->prepare('SELECT category, COUNT(*) AS cnt FROM ' . TBL_CLOTHES . ' WHERE user_id = ? GROUP BY category');
 $catStmt->execute([$_SESSION['user_id']]);
 $categoryStats = $catStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
@@ -29,11 +29,11 @@ $suggestStmt = $pdo->prepare(
             b.name AS bottom_name, b.image_path AS bottom_image, b.category AS bottom_cat,
             s.name AS shoe_name, s.image_path AS shoe_image, s.category AS shoe_cat,
             a.name AS accessory_name, a.image_path AS accessory_image, a.category AS accessory_cat
-     FROM '. TBL_OUTFITS .' o
-     LEFT JOIN '. TBL_CLOTHES .' t ON t.id = o.top_id AND t.user_id = o.user_id
-     LEFT JOIN '. TBL_CLOTHES .' b ON b.id = o.bottom_id AND b.user_id = o.user_id
-     LEFT JOIN '. TBL_CLOTHES .' s ON s.id = o.shoe_id AND s.user_id = o.user_id
-     LEFT JOIN '. TBL_CLOTHES .' a ON a.id = o.accessory_id AND a.user_id = o.user_id
+     FROM ' . TBL_OUTFITS . ' o
+     LEFT JOIN ' . TBL_CLOTHES . ' t ON t.id = o.top_id AND t.user_id = o.user_id
+     LEFT JOIN ' . TBL_CLOTHES . ' b ON b.id = o.bottom_id AND b.user_id = o.user_id
+     LEFT JOIN ' . TBL_CLOTHES . ' s ON s.id = o.shoe_id AND s.user_id = o.user_id
+     LEFT JOIN ' . TBL_CLOTHES . ' a ON a.id = o.accessory_id AND a.user_id = o.user_id
      WHERE o.user_id = ?
      ORDER BY o.created_at DESC
      LIMIT 7'
@@ -42,12 +42,12 @@ $suggestStmt->execute([$_SESSION['user_id']]);
 $suggestedOutfits = $suggestStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Most worn clothes
-$topClothesStmt = $pdo->prepare('SELECT id, name, image_path, wear_count FROM '. TBL_CLOTHES .' WHERE user_id = ? ORDER BY wear_count DESC, last_worn_at DESC LIMIT 5');
+$topClothesStmt = $pdo->prepare('SELECT id, name, image_path, wear_count FROM ' . TBL_CLOTHES . ' WHERE user_id = ? ORDER BY wear_count DESC, last_worn_at DESC LIMIT 5');
 $topClothesStmt->execute([$_SESSION['user_id']]);
 $topClothes = $topClothesStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Favorite vw_outfits (server-side)
-$favOutfitsStmt = $pdo->prepare('SELECT id, title FROM '. TBL_OUTFITS .' WHERE user_id = ? AND is_favorite = 1 ORDER BY created_at DESC LIMIT 5');
+$favOutfitsStmt = $pdo->prepare('SELECT id, title FROM ' . TBL_OUTFITS . ' WHERE user_id = ? AND is_favorite = 1 ORDER BY created_at DESC LIMIT 5');
 $favOutfitsStmt->execute([$_SESSION['user_id']]);
 $favOutfits = $favOutfitsStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -71,12 +71,12 @@ $plannedSql = "SELECT p.id AS plan_id, p.planned_for, o.id AS outfit_id, o.title
           b.name AS bottom_name, b.image_path AS bottom_image, b.category AS bottom_cat,
           s.name AS shoe_name, s.image_path AS shoe_image, s.category AS shoe_cat,
           a.name AS accessory_name, a.image_path AS accessory_image, a.category AS accessory_cat
-        FROM '. TBL_OUTFITS .'_planned p
-        INNER JOIN '. TBL_OUTFITS .' o ON p.outfit_id = o.id
-        LEFT JOIN '. TBL_CLOTHES .' t ON t.id = o.top_id AND t.user_id = o.user_id
-        LEFT JOIN '. TBL_CLOTHES .' b ON b.id = o.bottom_id AND b.user_id = o.user_id
-        LEFT JOIN '. TBL_CLOTHES .' s ON s.id = o.shoe_id AND s.user_id = o.user_id
-        LEFT JOIN '. TBL_CLOTHES .' a ON a.id = o.accessory_id AND a.user_id = o.user_id
+        FROM " . TBL_OUTFITS_PLANNED . " p
+        INNER JOIN " . TBL_OUTFITS . " o ON p.outfit_id = o.id
+        LEFT JOIN " . TBL_CLOTHES . " t ON t.id = o.top_id AND t.user_id = o.user_id
+        LEFT JOIN " . TBL_CLOTHES . " b ON b.id = o.bottom_id AND b.user_id = o.user_id
+        LEFT JOIN " . TBL_CLOTHES . " s ON s.id = o.shoe_id AND s.user_id = o.user_id
+        LEFT JOIN " . TBL_CLOTHES . " a ON a.id = o.accessory_id AND a.user_id = o.user_id
         WHERE p.user_id = ? AND p.planned_for IN ($ph)";
 $planStmt = $pdo->prepare($plannedSql);
 $planStmt->execute(array_merge([$_SESSION['user_id']], $dates));
