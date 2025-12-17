@@ -291,65 +291,31 @@ class Security {
     }
     
     /**
-     * Check if user session is valid
+     * Validate if user session is active - DISABLED (table not in schema)
      * @param int $userId
      * @return bool
      */
     public function validateUserSession($userId) {
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $userId) {
-            return false;
-        }
-        
-        // Check if session exists in active_sessions table
-        $sessionId = session_id();
-        $sql = "SELECT id FROM active_sessions 
-                WHERE user_id = ? AND session_id = ? AND last_activity > DATE_SUB(NOW(), INTERVAL 30 MINUTE)";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId, $sessionId]);
-        
-        return $stmt->fetch() !== false;
+        // Simplified validation without active_sessions table
+        return isset($_SESSION['user_id']) && $_SESSION['user_id'] == $userId;
     }
     
     /**
-     * Create active session record
+     * Create active session record - DISABLED (table not in schema)
      * @param int $userId
      */
     public function createActiveSession($userId) {
-        $sessionId = session_id();
-        $ip = self::getClientIP();
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
-        
-        // Remove old sessions for this user (keep last 5)
-        $sql = "DELETE FROM active_sessions 
-                WHERE user_id = ? AND id NOT IN (
-                    SELECT id FROM (
-                        SELECT id FROM active_sessions 
-                        WHERE user_id = ? 
-                        ORDER BY last_activity DESC 
-                        LIMIT 5
-                    ) AS keep_sessions
-                )";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId, $userId]);
-        
-        // Insert new session
-        $sql = "INSERT INTO active_sessions (user_id, session_id, ip_address, user_agent, created_at) 
-                VALUES (?, ?, ?, ?, NOW())";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId, $sessionId, $ip, $userAgent]);
+        // Disabled - active_sessions table not in database schema
+        return;
     }
     
     /**
-     * Update session activity timestamp
+     * Update session activity timestamp - DISABLED (table not in schema)
      * @param int $userId
      */
     public function updateSessionActivity($userId) {
-        $sessionId = session_id();
-        $sql = "UPDATE active_sessions SET last_activity = NOW() 
-                WHERE user_id = ? AND session_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId, $sessionId]);
+        // Disabled - active_sessions table not in database schema
+        return;
     }
     
     /**

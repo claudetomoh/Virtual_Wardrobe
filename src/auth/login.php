@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $security->logLoginAttempt($clientIP, $email, true);
                 $security->logSecurityEvent('login_success', $user['id'], ['ip' => $clientIP]);
                 
-                // Create active session
-                $security->createActiveSession($user['id']);
+                // Create active session - DISABLED (table not in schema)
+                // $security->createActiveSession($user['id']);
                 
                 header('Location: ' . url_path('src/clothes/list.php'));
                 exit;
