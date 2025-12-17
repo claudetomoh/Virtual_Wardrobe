@@ -25,7 +25,7 @@ class Security {
         $timeLimit = date('Y-m-d H:i:s', strtotime("-{$timeWindow} minutes"));
         
         $sql = "SELECT COUNT(*) as attempt_count 
-                FROM '. TBL_LOGIN_ATTEMPTS .' 
+                FROM " . TBL_LOGIN_ATTEMPTS . " 
                 WHERE {$column} = ? 
                 AND attempted_at > ? 
                 AND success = FALSE";
@@ -44,7 +44,7 @@ class Security {
      * @param bool $success
      */
     public function logLoginAttempt($ipAddress, $email = null, $success = false) {
-        $sql = "INSERT INTO '. TBL_LOGIN_ATTEMPTS .' (ip_address, email, success, attempted_at) 
+        $sql = "INSERT INTO " . TBL_LOGIN_ATTEMPTS . " (ip_address, email, success, attempted_at) 
                 VALUES (?, ?, ?, NOW())";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$ipAddress, $email, $success ? 1 : 0]);
@@ -60,7 +60,7 @@ class Security {
      */
     public function clearLoginAttempts($identifier, $type = 'ip') {
         $column = ($type === 'email') ? 'email' : 'ip_address';
-        $sql = "DELETE FROM '. TBL_LOGIN_ATTEMPTS .' WHERE {$column} = ?";
+        $sql = "DELETE FROM " . TBL_LOGIN_ATTEMPTS . " WHERE {$column} = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$identifier]);
     }
@@ -69,7 +69,7 @@ class Security {
      * Clean up login attempts older than 24 hours
      */
     private function cleanupOldAttempts() {
-        $sql = "DELETE FROM '. TBL_LOGIN_ATTEMPTS .' WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+        $sql = "DELETE FROM " . TBL_LOGIN_ATTEMPTS . " WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)";
         $this->pdo->exec($sql);
     }
     
@@ -278,7 +278,7 @@ class Security {
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
         $detailsJson = json_encode($details);
         
-        $sql = "INSERT INTO '. TBL_AUDIT_LOG .' (user_id, action, ip_address, user_agent, details, created_at) 
+        $sql = "INSERT INTO " . TBL_AUDIT_LOG . " (user_id, action, ip_address, user_agent, details, created_at) 
                 VALUES (?, ?, ?, ?, ?, NOW())";
         
         try {
