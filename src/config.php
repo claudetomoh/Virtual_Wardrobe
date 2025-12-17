@@ -9,12 +9,13 @@ Security::setSecurityHeaders();
 Security::configureSession();
 
 // Global configuration and helpers
+// Production/School Server Settings
 $dbHost = getenv('DB_HOST') ?: 'localhost';
-$dbPort = getenv('DB_PORT') ?: '3307';
-$dbUser = getenv('DB_USER') ?: getenv('MYSQL_USER') ?: 'root';
-$dbPass = getenv('DB_PASS') ?: getenv('MYSQL_ROOT_PASSWORD') ?: getenv('MYSQL_PASSWORD') ?: getenv('MYSQL_PWD') ?: '';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbUser = getenv('DB_USER') ?: getenv('MYSQL_USER') ?: 'tomoh.ikfingeh';
+$dbPass = getenv('DB_PASS') ?: getenv('MYSQL_ROOT_PASSWORD') ?: getenv('MYSQL_PASSWORD') ?: getenv('MYSQL_PWD') ?: 'STCL@ude20@?';
 // read DB name from env, fallback to default
-$dbName = getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'wardrobe_app'; // replace with your DB name if different
+$dbName = getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'webtech_2025A_tomoh_ikfingeh';
 
 $dsn = "mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4";
 
