@@ -79,6 +79,7 @@ include __DIR__ . '/../templates/header.php';
                     <div class="wardrobe-thumb">
                         <img src="<?= h($item['image_path']) ?>" alt="<?= h($item['name']) ?>">
                         <button class="fav-toggle" data-id="<?= (int)$item['id'] ?>" data-fav="<?= (int)$item['favorite'] ?>" aria-label="Favorite"><i class="fa-solid fa-star"></i></button>
+                        <button class="laundry-toggle" data-id="<?= (int)$item['id'] ?>" data-laundry="<?= (int)$item['in_laundry'] ?>" aria-label="In Laundry" title="<?= $item['in_laundry'] ? 'In laundry' : 'Mark as in laundry' ?>"><i class="fa-solid fa-soap"></i></button>
                         <span class="tag chip-sm"><?= h(ucfirst($item['category'])) ?></span>
                     </div>
                     <div class="wardrobe-meta">
@@ -104,7 +105,10 @@ include __DIR__ . '/../templates/header.php';
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const favButtons = document.querySelectorAll('.fav-toggle');
+    const laundryButtons = document.querySelectorAll('.laundry-toggle');
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    
+    // Favorite button handler
     favButtons.forEach(btn => {
         const id = btn.dataset.id;
         if (btn.dataset.fav && btn.dataset.fav === '1') btn.classList.add('active');
@@ -126,6 +130,34 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) {
                 console.error(e);
                 window.showToast('Error toggling favorite', 'error');
+            }
+            btn.disabled = false;
+        });
+    });
+
+    // Laundry button handler
+    laundryButtons.forEach(btn => {
+        const id = btn.dataset.id;
+        if (btn.dataset.laundry && btn.dataset.laundry === '1') btn.classList.add('active');
+        btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            try {
+                const form = new FormData();
+                form.append('id', id);
+                form.append('action', 'toggle_laundry');
+                form.append('csrf_token', csrf);
+                const resp = await fetch('<?=h(url_path('src/clothes/toggle.php'))?>', { method: 'POST', body: form, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                const json = await resp.json();
+                if (json.success) {
+                    const active = json.in_laundry == 1;
+                    btn.classList.toggle('active', active);
+                    btn.dataset.laundry = active ? '1' : '0';
+                    btn.title = active ? 'In laundry' : 'Mark as in laundry';
+                    window.showToast(active ? 'Item marked as in laundry' : 'Item removed from laundry', 'success');
+                }
+            } catch (e) {
+                console.error(e);
+                window.showToast('Error toggling laundry status', 'error');
             }
             btn.disabled = false;
         });
