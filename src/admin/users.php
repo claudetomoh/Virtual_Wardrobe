@@ -202,7 +202,7 @@ include __DIR__ . '/../templates/header.php';
 
 <div class="admin-header">
     <h1><i class="fas fa-users-cog"></i> User Management</h1>
-    <p style="color: rgba(226, 232, 240, 0.8); margin: 0;">Manage all '. TBL_USERS .' and their wardrobe statistics</p>
+    <p style="color: rgba(226, 232, 240, 0.8); margin: 0;">Manage all users and their wardrobe statistics</p>
 </div>
 
 <div class="users-grid">
