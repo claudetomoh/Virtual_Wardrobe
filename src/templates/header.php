@@ -7,6 +7,7 @@ $isDashboard = isset($_SERVER['SCRIPT_NAME']) && str_contains($_SERVER['SCRIPT_N
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com https://cdn.socket.io https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:3000 ws://localhost:3000;" />
   <title>Virtual Wardrobe</title>
   <link rel="stylesheet" href="<?=h(url_path('public/css/styles.css'))?>?v=20251216" />
   <link rel="stylesheet" href="<?=h(url_path('public/css/modal.css'))?>?v=20251218" />
