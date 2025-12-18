@@ -32,7 +32,7 @@ include __DIR__ . '/../templates/header.php';
         <div>
             <p class="hero-kicker" style="letter-spacing:0.18em;">Wardrobe</p>
             <h2 class="hero-title" style="font-size:2.1rem; margin:0;">Your curated closet</h2>
-            <p class="muted">Filter, favorite, and plan vw_outfits from a glassy grid.</p>
+            <p class="muted">Filter, favorite, and plan outfits from a glassy grid.</p>
         </div>
         <div class="hero-actions">
             <a class="pill-btn pill-primary" href="<?= h(url_path('src/clothes/upload.php')); ?>"><i class="fa-solid fa-cloud-arrow-up"></i> Upload item</a>
