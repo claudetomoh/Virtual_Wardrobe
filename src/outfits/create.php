@@ -5,19 +5,19 @@ requireLogin();
 $error = '';
 $success = '';
 
-$tops = $pdo->prepare('SELECT id, name, image_path FROM '. TBL_CLOTHES .' WHERE user_id = ? AND category = "top" ORDER BY name');
+$tops = $pdo->prepare('SELECT id, name, image_path FROM ' . TBL_CLOTHES . ' WHERE user_id = ? AND category = "top" ORDER BY name');
 $tops->execute([$_SESSION['user_id']]);
 $tops = $tops->fetchAll(PDO::FETCH_ASSOC);
 
-$bottoms = $pdo->prepare('SELECT id, name, image_path FROM '. TBL_CLOTHES .' WHERE user_id = ? AND category = "bottom" ORDER BY name');
+$bottoms = $pdo->prepare('SELECT id, name, image_path FROM ' . TBL_CLOTHES . ' WHERE user_id = ? AND category = "bottom" ORDER BY name');
 $bottoms->execute([$_SESSION['user_id']]);
 $bottoms = $bottoms->fetchAll(PDO::FETCH_ASSOC);
 
-$shoes = $pdo->prepare('SELECT id, name, image_path FROM '. TBL_CLOTHES .' WHERE user_id = ? AND category = "shoes" ORDER BY name');
+$shoes = $pdo->prepare('SELECT id, name, image_path FROM ' . TBL_CLOTHES . ' WHERE user_id = ? AND category = "shoes" ORDER BY name');
 $shoes->execute([$_SESSION['user_id']]);
 $shoes = $shoes->fetchAll(PDO::FETCH_ASSOC);
 
-$accessories = $pdo->prepare('SELECT id, name, image_path FROM '. TBL_CLOTHES .' WHERE user_id = ? AND category = "accessory" ORDER BY name');
+$accessories = $pdo->prepare('SELECT id, name, image_path FROM ' . TBL_CLOTHES . ' WHERE user_id = ? AND category = "accessory" ORDER BY name');
 $accessories->execute([$_SESSION['user_id']]);
 $accessories = $accessories->fetchAll(PDO::FETCH_ASSOC);
 
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $placeholders = implode(',', array_fill(0, count($selected), '?'));
                 $params = $selected;
                 array_unshift($params, $_SESSION['user_id']);
-                $check = $pdo->prepare("SELECT COUNT(*) FROM '. TBL_CLOTHES .' WHERE user_id = ? AND id IN ($placeholders)");
+                $check = $pdo->prepare("SELECT COUNT(*) FROM " . TBL_CLOTHES . " WHERE user_id = ? AND id IN ($placeholders)");
                 $check->execute($params);
                 $count = (int)$check->fetchColumn();
                 if ($count !== count($selected)) {
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if (!$error) {
-                $stmt = $pdo->prepare('INSERT INTO '. TBL_OUTFITS .' (user_id, top_id, bottom_id, shoe_id, accessory_id, title) VALUES (?, ?, ?, ?, ?, ?)');
+                $stmt = $pdo->prepare('INSERT INTO ' . TBL_OUTFITS . ' (user_id, top_id, bottom_id, shoe_id, accessory_id, title) VALUES (?, ?, ?, ?, ?, ?)');
                 $stmt->execute([$_SESSION['user_id'], $topId, $bottomId, $shoeId, $accessoryId, $title]);
                 header('Location: list.php');
                 exit;
