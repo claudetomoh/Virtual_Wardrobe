@@ -21,6 +21,10 @@ $accessories = $pdo->prepare('SELECT id, name, image_path FROM ' . TBL_CLOTHES .
 $accessories->execute([$_SESSION['user_id']]);
 $accessories = $accessories->fetchAll(PDO::FETCH_ASSOC);
 
+$others = $pdo->prepare('SELECT id, name, image_path FROM ' . TBL_CLOTHES . ' WHERE user_id = ? AND category = "other" ORDER BY name');
+$others->execute([$_SESSION['user_id']]);
+$others = $others->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf($_POST['csrf_token'] ?? '')) {
         $error = 'Invalid request. Please try again.';
@@ -30,11 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $bottomId = $_POST['bottom_id'] ?: null;
         $shoeId = $_POST['shoe_id'] ?: null;
         $accessoryId = $_POST['accessory_id'] ?: null;
+        $otherId = $_POST['other_id'] ?: null;
 
         if (!$topId && !$bottomId && !$shoeId) {
             $error = 'Please select at least one item';
         } else {
-            $selected = array_filter([$topId, $bottomId, $shoeId, $accessoryId], fn($v) => $v !== null && $v !== '');
+            $selected = array_filter([$topId, $bottomId, $shoeId, $accessoryId, $otherId], fn($v) => $v !== null && $v !== '');
             if (!empty($selected)) {
                 $placeholders = implode(',', array_fill(0, count($selected), '?'));
                 $params = $selected;
@@ -48,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if (!$error) {
-                $stmt = $pdo->prepare('INSERT INTO ' . TBL_OUTFITS . ' (user_id, top_id, bottom_id, shoe_id, accessory_id, title) VALUES (?, ?, ?, ?, ?, ?)');
-                $stmt->execute([$_SESSION['user_id'], $topId, $bottomId, $shoeId, $accessoryId, $title]);
+                $stmt = $pdo->prepare('INSERT INTO ' . TBL_OUTFITS . ' (user_id, top_id, bottom_id, shoe_id, accessory_id, other_id, title) VALUES (?, ?, ?, ?, ?, ?, ?)');
+                $stmt->execute([$_SESSION['user_id'], $topId, $bottomId, $shoeId, $accessoryId, $otherId, $title]);
                 header('Location: list.php');
                 exit;
             }
@@ -126,6 +131,16 @@ include __DIR__ . '/../templates/header.php';
                             <?php endforeach; ?>
                         </select>
                     </div>
+
+                    <div class="form-field">
+                        <label for="other_id"><i class="fa-solid fa-ellipsis"></i> Other</label>
+                        <select id="other_id" name="other_id" class="form-control outfit-select" data-slot="other">
+                            <option value="" data-name="None" data-image="">None</option>
+                            <?php foreach ($others as $item): ?>
+                                <option value="<?=$item['id']?>" data-name="<?=htmlspecialchars($item['name'])?>" data-image="<?=htmlspecialchars($item['image_path'])?>"><?=htmlspecialchars($item['name'])?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-actions">
@@ -163,6 +178,12 @@ include __DIR__ . '/../templates/header.php';
                     <div class="slot-label">Accessory</div>
                     <div class="slot-frame">
                         <div class="slot-empty">Optional accessory</div>
+                    </div>
+                </div>
+                <div class="preview-slot" data-slot="other">
+                    <div class="slot-label">Other</div>
+                    <div class="slot-frame">
+                        <div class="slot-empty">Optional other</div>
                     </div>
                 </div>
             </div>

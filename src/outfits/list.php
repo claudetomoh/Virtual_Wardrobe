@@ -73,6 +73,7 @@ include __DIR__ . '/../templates/header.php';
                     $outfit['bottom_id'],
                     $outfit['shoe_id'],
                     $outfit['accessory_id'],
+                    $outfit['other_id'] ?? null,
                 ]));
                 $items = [];
                 $tags = [];
