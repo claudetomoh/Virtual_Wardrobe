@@ -556,6 +556,38 @@ a:hover {
 .plan-title {
     font-weight: 800;
     color: #f7f8ff;
+    font-size: 1.1rem;
+}
+
+
+/* Colorful plan titles for differentiation */
+
+.plan-title.color-1 {
+    color: #5b7bff;
+}
+
+.plan-title.color-2 {
+    color: #f97316;
+}
+
+.plan-title.color-3 {
+    color: #34d399;
+}
+
+.plan-title.color-4 {
+    color: #f472b6;
+}
+
+.plan-title.color-5 {
+    color: #facc15;
+}
+
+.plan-title.color-6 {
+    color: #38bdf8;
+}
+
+.plan-title.color-7 {
+    color: #fb7185;
 }
 
 .plan-actions {

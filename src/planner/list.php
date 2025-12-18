@@ -90,13 +90,18 @@ include __DIR__ . '/../templates/header.php';
       <?php else: ?>
         <div class="plan-list">
           <?php foreach ($plans as $plan): ?>
+            <?php 
+              // Assign a color class based on the outfit id for visual differentiation
+              $colorIdx = 1 + ((int)$plan['outfit_id'] % 7); 
+              $colorClass = "color-$colorIdx";
+            ?>
             <div class="plan-row">
               <div class="plan-date">
                 <p class="label">Date</p>
                 <p><?=h(date('D, M j', strtotime($plan['planned_for'])))?></p>
               </div>
               <div class="plan-body">
-                <div class="plan-title"><?=h($plan['title'] ?: 'Untitled outfit')?></div>
+                <div class="plan-title <?= $colorClass ?>"><?=h($plan['title'] ?: 'Untitled outfit')?></div>
                 <?php if (!empty($plan['note'])): ?>
                   <p class="muted small"><?=h($plan['note'])?></p>
                 <?php endif; ?>
