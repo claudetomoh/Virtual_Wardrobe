@@ -3,14 +3,14 @@ require_once __DIR__ . '/../config.php';
 requireLogin();
 
 // Fetch user's vw_outfits for selection
-$outfitsStmt = $pdo->prepare('SELECT id, title, created_at FROM '. TBL_OUTFITS .' WHERE user_id = ? ORDER BY created_at DESC');
+$outfitsStmt = $pdo->prepare('SELECT id, title, created_at FROM ' . TBL_OUTFITS . ' WHERE user_id = ? ORDER BY created_at DESC');
 $outfitsStmt->execute([$_SESSION['user_id']]);
 $outfits = $outfitsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch planned vw_outfits upcoming
 $plansStmt = $pdo->prepare('SELECT p.*, o.title
-                            FROM '. TBL_OUTFITS .'_planned p
-                            INNER JOIN '. TBL_OUTFITS .' o ON p.outfit_id = o.id
+                            FROM ' . TBL_OUTFITS_PLANNED . ' p
+                            INNER JOIN ' . TBL_OUTFITS . ' o ON p.outfit_id = o.id
                             WHERE p.user_id = ?
                             ORDER BY p.planned_for ASC, p.id DESC');
 $plansStmt->execute([$_SESSION['user_id']]);

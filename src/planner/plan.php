@@ -29,7 +29,7 @@ if ($outfitId <= 0 || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $plannedFor)) {
 }
 
 // Ensure outfit belongs to user
-$stmt = $pdo->prepare('SELECT id FROM '. TBL_OUTFITS .' WHERE id = ? AND user_id = ?');
+$stmt = $pdo->prepare('SELECT id FROM ' . TBL_OUTFITS . ' WHERE id = ? AND user_id = ?');
 $stmt->execute([$outfitId, $_SESSION['user_id']]);
 $outfit = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$outfit) {
@@ -38,13 +38,13 @@ if (!$outfit) {
 }
 
 try {
-    $ins = $pdo->prepare('INSERT INTO '. TBL_OUTFITS .'_planned (user_id, outfit_id, planned_for, note, season_hint)
+    $ins = $pdo->prepare('INSERT INTO ' . TBL_OUTFITS_PLANNED . ' (user_id, outfit_id, planned_for, note, season_hint)
                            VALUES (?, ?, ?, ?, ?)
                            ON DUPLICATE KEY UPDATE outfit_id = VALUES(outfit_id), note = VALUES(note), season_hint = VALUES(season_hint)');
     $ins->execute([$_SESSION['user_id'], $outfitId, $plannedFor, $note, $seasonHint]);
     log_action($pdo, $_SESSION['user_id'], 'plan_create', 'outfit_plan', null, json_encode(['outfit_id' => $outfitId, 'planned_for' => $plannedFor]));
     // touch vw_planner_updates for SSE clients
-    $up = $pdo->prepare('INSERT INTO '. TBL_PLANNER_UPDATES .' (user_id, last_update) VALUES (?, NOW()) ON DUPLICATE KEY UPDATE last_update = NOW()');
+    $up = $pdo->prepare('INSERT INTO ' . TBL_PLANNER_UPDATES . ' (user_id, last_update) VALUES (?, NOW()) ON DUPLICATE KEY UPDATE last_update = NOW()');
     $up->execute([$_SESSION['user_id']]);
     // emit to socket server for real-time updates
     if (function_exists('emit_socket_event')) {

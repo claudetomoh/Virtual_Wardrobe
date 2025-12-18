@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config.php';
 requireLogin();
 
 // load user's vw_outfits for external dragging
-$outfitsStmt = $pdo->prepare('SELECT id, title, top_id, bottom_id, shoe_id, accessory_id FROM '. TBL_OUTFITS .' WHERE user_id = ? ORDER BY created_at DESC');
+$outfitsStmt = $pdo->prepare('SELECT id, title, top_id, bottom_id, shoe_id, accessory_id FROM ' . TBL_OUTFITS . ' WHERE user_id = ? ORDER BY created_at DESC');
 $outfitsStmt->execute([$_SESSION['user_id']]);
 $outfits = $outfitsStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -43,7 +43,7 @@ include __DIR__ . '/../templates/header.php';
             $img = '';
             if (!empty($itemIds)) {
               $ph = implode(',', array_fill(0, count($itemIds), '?'));
-              $stmt = $pdo->prepare("SELECT image_path FROM '. TBL_CLOTHES .' WHERE id IN ($ph) LIMIT 1");
+              $stmt = $pdo->prepare("SELECT image_path FROM " . TBL_CLOTHES . " WHERE id IN ($ph) LIMIT 1");
               $stmt->execute($itemIds);
               $img = $stmt->fetchColumn() ?: '';
             }

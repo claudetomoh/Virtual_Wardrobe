@@ -11,12 +11,12 @@ $end = $_GET['end'] ?? null;
 $params = [$_SESSION['user_id']];
 $sql = 'SELECT p.id AS plan_id, p.planned_for, p.note, p.season_hint, o.id AS outfit_id, o.title,
                t.image_path AS top_image, b.image_path AS bottom_image, s.image_path AS shoe_image, a.image_path AS accessory_image
-        FROM '. TBL_OUTFITS .'_planned p
-        JOIN '. TBL_OUTFITS .' o ON p.outfit_id = o.id
-        LEFT JOIN '. TBL_CLOTHES .' t ON o.top_id = t.id
-        LEFT JOIN '. TBL_CLOTHES .' b ON o.bottom_id = b.id
-        LEFT JOIN '. TBL_CLOTHES .' s ON o.shoe_id = s.id
-        LEFT JOIN '. TBL_CLOTHES .' a ON o.accessory_id = a.id
+        FROM ' . TBL_OUTFITS_PLANNED . ' p
+        JOIN ' . TBL_OUTFITS . ' o ON p.outfit_id = o.id
+        LEFT JOIN ' . TBL_CLOTHES . ' t ON o.top_id = t.id
+        LEFT JOIN ' . TBL_CLOTHES . ' b ON o.bottom_id = b.id
+        LEFT JOIN ' . TBL_CLOTHES . ' s ON o.shoe_id = s.id
+        LEFT JOIN ' . TBL_CLOTHES . ' a ON o.accessory_id = a.id
         WHERE p.user_id = ?';
 
 if ($start && $end) {

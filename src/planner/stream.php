@@ -15,7 +15,7 @@ session_write_close();
 
 $lastSent = $_GET['last'] ?? null;
 try {
-    $stmt = $pdo->prepare('SELECT last_update FROM '. TBL_PLANNER_UPDATES .' WHERE user_id = ?');
+    $stmt = $pdo->prepare('SELECT last_update FROM ' . TBL_PLANNER_UPDATES . ' WHERE user_id = ?');
     $pollCount = 0;
     while (true) {
         $stmt->execute([$userId]);

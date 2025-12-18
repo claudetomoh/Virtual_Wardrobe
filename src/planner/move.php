@@ -22,7 +22,7 @@ if ($id <= 0 || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
     exit;
 }
 
-$stmt = $pdo->prepare('SELECT id FROM '. TBL_OUTFITS .'_planned WHERE id = ? AND user_id = ?');
+$stmt = $pdo->prepare('SELECT id FROM ' . TBL_OUTFITS_PLANNED . ' WHERE id = ? AND user_id = ?');
 $stmt->execute([$id, $_SESSION['user_id']]);
 $plan = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$plan) {
@@ -32,10 +32,10 @@ if (!$plan) {
 }
 
 try {
-    $up = $pdo->prepare('UPDATE vw_outfits_planned SET planned_for = ? WHERE id = ?');
+    $up = $pdo->prepare('UPDATE ' . TBL_OUTFITS_PLANNED . ' SET planned_for = ? WHERE id = ?');
     $up->execute([$date, $id]);
     log_action($pdo, $_SESSION['user_id'], 'plan_move', 'outfit_plan', $id, json_encode(['date' => $date]));
-    $touch = $pdo->prepare('INSERT INTO '. TBL_PLANNER_UPDATES .' (user_id, last_update) VALUES (?, NOW()) ON DUPLICATE KEY UPDATE last_update = NOW()');
+    $touch = $pdo->prepare('INSERT INTO ' . TBL_PLANNER_UPDATES . ' (user_id, last_update) VALUES (?, NOW()) ON DUPLICATE KEY UPDATE last_update = NOW()');
     $touch->execute([$_SESSION['user_id']]);
     if (function_exists('emit_socket_event')) {
         emit_socket_event('planner_update', ['user_id' => $_SESSION['user_id'], 'action' => 'move', 'plan_id' => $id, 'planned_for' => $date]);
