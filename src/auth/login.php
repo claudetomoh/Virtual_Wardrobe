@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Create active session - DISABLED (table not in schema)
                 // $security->createActiveSession($user['id']);
                 
-                header('Location: ' . url_path('src/clothes/list.php'));
+                header('Location: ' . url_path('src/dashboard.php'));
                 exit;
             } else {
                 // Failed login - log attempt
