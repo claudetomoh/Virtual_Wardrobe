@@ -19,6 +19,8 @@ const Modal = {
 
                 modal.addEventListener('click', (e) => {
                     if (e.target.classList.contains('modal-btn')) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         const value = e.target.dataset.value === 'true';
                         this._closeModal(modal);
                         resolve(value);
@@ -65,6 +67,8 @@ const Modal = {
 
                 modal.addEventListener('click', (e) => {
                     if (e.target.classList.contains('modal-btn')) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         if (e.target.dataset.value === 'submit') {
                             handleSubmit();
                         } else {
@@ -90,6 +94,8 @@ const Modal = {
 
                 modal.addEventListener('click', (e) => {
                     if (e.target.classList.contains('modal-btn')) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         this._closeModal(modal);
                         resolve();
                     }
@@ -127,6 +133,14 @@ const Modal = {
     
     document.body.appendChild(modal);
     setTimeout(() => modal.classList.add('show'), 10);
+    
+    // Prevent modal from closing when clicking inside it
+    const modalContent = modal.querySelector('.custom-modal');
+    if (modalContent) {
+      modalContent.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
     
     return modal;
   },
