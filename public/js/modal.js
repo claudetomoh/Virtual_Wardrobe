@@ -134,11 +134,14 @@ const Modal = {
     document.body.appendChild(modal);
     setTimeout(() => modal.classList.add('show'), 10);
     
-    // Prevent modal from closing when clicking inside it
+    // Prevent modal from closing when clicking inside modal content (but not buttons)
     const modalContent = modal.querySelector('.custom-modal');
     if (modalContent) {
       modalContent.addEventListener('click', (e) => {
-        e.stopPropagation();
+        // Only stop propagation if NOT clicking a button
+        if (!e.target.classList.contains('modal-btn')) {
+          e.stopPropagation();
+        }
       });
     }
     
