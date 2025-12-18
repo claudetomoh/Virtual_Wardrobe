@@ -336,9 +336,9 @@ include __DIR__ . '/templates/header.php';
         <a class="btn btn-primary" href="<?= h(url_path('src/outfits/create.php')); ?>"><i class="fa-solid fa-plus"></i> Create Outfit</a>
         <a class="btn btn-secondary" href="<?= h(url_path('src/outfits/list.php')); ?>"><i class="fa-solid fa-eye"></i> View Outfits</a>
         <a class="btn btn-secondary" href="<?=h(url_path('src/planner/calendar.php'))?>"><i class="fa-solid fa-calendar-days"></i> Calendar</a>
-      <form method="POST" action="<?=h(url_path('src/clothes/clear_laundry.php'))?>" style="display:inline;">
+      <form id="clearLaundryForm" method="POST" action="<?=h(url_path('src/clothes/clear_laundry.php'))?>" style="display:inline;">
         <input type="hidden" name="csrf_token" value="<?=h(csrf_token())?>">
-        <button class="btn btn-danger" type="submit" onclick="return confirm('Clear laundry for all items? This will mark all items as not in laundry.')"><i class="fa-solid fa-broom"></i> Clear Laundry</button>
+        <button class="btn btn-danger" type="button" onclick="handleClearLaundry(event)"><i class="fa-solid fa-broom"></i> Clear Laundry</button>
       </form>
       <button id="autoPlanBtn" class="btn btn-secondary"><i class="fa-solid fa-bolt"></i> Auto Plan Week</button>
     </div>
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       return; 
     }
     
-    if (!confirm(`Auto-plan ${Math.min(outfits.length, emptySlots.length)} vw_outfits into empty days?`)) return;
+    if (!await Modal.confirm(`Auto-plan ${Math.min(outfits.length, emptySlots.length)} outfits into empty days?`, 'success')) return;
     
     let planned = 0;
     for (let i = 0; i < Math.min(outfits.length, emptySlots.length); i++) {
@@ -678,12 +678,30 @@ document.addEventListener('DOMContentLoaded', ()=>{
       window.showToast('Failed to auto-plan outfits. Please try again.', 'error');
     }
   });
-  // clear laundry via AJAX
+  // clear laundry via AJAX  
+  window.handleClearLaundry = async function(e) {
+    e.preventDefault();
+    if (!await Modal.confirm('Clear laundry for all items? This will mark all items as not in laundry.', 'warning')) return;
+    const clearLaundryForm = document.getElementById('clearLaundryForm');
+    const fd = new FormData(clearLaundryForm);
+    try {
+      const res = await fetch(clearLaundryForm.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      if (res.ok) {
+        window.showToast('Laundry cleared', 'success');
+        await refreshDashboardPlanner();
+      } else {
+        window.showToast('Failed to clear laundry', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      window.showToast('Error clearing laundry', 'error');
+    }
+  };
+
   const clearLaundryForm = document.querySelector('form[action$="clothes/clear_laundry.php"]');
   if (clearLaundryForm) {
     clearLaundryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!confirm('Clear laundry for all items? This will mark all items as not in laundry.')) return;
       const fd = new FormData(clearLaundryForm);
       try {
         const res = await fetch(clearLaundryForm.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
@@ -784,7 +802,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }));
             pop.querySelectorAll('.pop-delete').forEach(b => b.addEventListener('click', async (e) => {
               const planId = b.dataset.planId;
-              if (!confirm('Delete this plan?')) return;
+              if (!await Modal.confirm('Are you sure you want to delete this plan?', 'danger')) return;
               try {
                 const form = new FormData();
                 form.append('id', planId);
@@ -980,7 +998,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Delete via modal
   if (dashModalDelete) {
     dashModalDelete.addEventListener('click', async () => {
-      if (!confirm('Delete this plan?')) return;
+      if (!await Modal.confirm('Are you sure you want to delete this plan?', 'danger')) return;
       const planId = document.getElementById('dashModalPlanId').value;
       dashModalDelete.disabled = true;
       try {

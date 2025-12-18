@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       const today = new Date().toISOString().slice(0,10);
-      const planned = prompt('Plan "' + draggedOutfitTitle + '" for which date? (YYYY-MM-DD)', today);
+      const planned = await Modal.prompt(`Plan "${draggedOutfitTitle}" for which date?`, today, 'YYYY-MM-DD');
       if (!planned) return;
       
       try {
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       const today = new Date().toISOString().slice(0,10);
-      const planned = prompt('Plan "' + draggedOutfitTitle + '" for which date? (YYYY-MM-DD)', today);
+      const planned = await Modal.prompt(`Plan "${draggedOutfitTitle}" for which date?`, today, 'YYYY-MM-DD');
       if (!planned) return;
       
       try {
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Delete via AJAX
   modalDelete.addEventListener('click', async () => {
-    if (!confirm('Delete this plan?')) return;
+    if (!await Modal.confirm('Are you sure you want to delete this plan?', 'danger')) return;
     const planId = document.getElementById('modalPlanId').value;
     try {
       modalDelete.disabled = true;

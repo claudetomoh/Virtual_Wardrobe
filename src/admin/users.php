@@ -253,9 +253,9 @@ include __DIR__ . '/../templates/header.php';
 </div>
 
 <script>
-function toggleRole(userId, currentRole) {
+async function toggleRole(userId, currentRole) {
     const action = currentRole === 'admin' ? 'remove admin privileges from' : 'grant admin privileges to';
-    if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+    if (!await Modal.confirm(`Are you sure you want to ${action} this user?`, currentRole === 'admin' ? 'warning' : 'success')) return;
     
     fetch('<?= url_path('src/admin/toggle_role.php') ?>', {
         method: 'POST',
@@ -267,18 +267,18 @@ function toggleRole(userId, currentRole) {
         if (data.success) {
             location.reload();
         } else {
-            alert('Error: ' + (data.error || 'Failed to update user role'));
+            Modal.alert('Error: ' + (data.error || 'Failed to update user role'), 'danger');
         }
     })
-    .catch(err => alert('Error: ' + err.message));
+    .catch(err => Modal.alert('Error: ' + err.message, 'danger'));
 }
 
-function deleteUser(userId, userName) {
-    if (!confirm(`Are you sure you want to delete user "${userName}"? This will permanently delete all their clothes, outfits, and data. This action cannot be undone.`)) return;
+async function deleteUser(userId, userName) {
+    if (!await Modal.confirm(`Are you sure you want to delete user "${userName}"? This will permanently delete all their clothes, outfits, and data. This action cannot be undone.`, 'danger')) return;
     
-    const confirmDelete = prompt(`Type "DELETE" to confirm deletion of ${userName}:`);
+    const confirmDelete = await Modal.prompt(`Type "DELETE" to confirm deletion of ${userName}:`, '', 'DELETE');
     if (confirmDelete !== 'DELETE') {
-        alert('Deletion cancelled.');
+        Modal.alert('Deletion cancelled - confirmation text did not match.', 'info');
         return;
     }
     

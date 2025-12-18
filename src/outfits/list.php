@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     deleteForms.forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!confirm('⚠️ Delete this outfit?')) return;
+            if (!await Modal.confirm('Are you sure you want to delete this outfit? This action cannot be undone.', 'danger')) return;
             const fd = new FormData(form);
             if (!fd.get('csrf_token')) fd.append('csrf_token', csrf);
             try {
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     wearForms.forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!confirm('Mark this outfit as worn? This will update the wear count and put items in laundry.')) return;
+            if (!await Modal.confirm('Mark this outfit as worn? This will update the wear count and put items in laundry.', 'success')) return;
             const fd = new FormData(form);
             if (!fd.get('csrf_token')) fd.append('csrf_token', csrf);
             try {

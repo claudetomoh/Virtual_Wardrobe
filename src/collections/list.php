@@ -74,7 +74,7 @@ include __DIR__ . '/../templates/header.php';
           <h3><?=h($collection['name'])?></h3>
           <p class="muted"><?=$collection['item_count']?> item(s) · Created <?=h(date('M j, Y', strtotime($collection['created_at'])))?></p>
         </div>
-        <form method="post" action="<?=url_path('src/collections/delete.php')?>" onsubmit="return confirm('Delete this collection?');">
+        <form class="delete-collection-form" method="post" action="<?=url_path('src/collections/delete.php')?>" onsubmit="event.preventDefault();">
           <input type="hidden" name="csrf_token" value="<?=h(csrf_token())?>">
           <input type="hidden" name="id" value="<?=h($collection['id'])?>">
           <input type="hidden" name="redirect" value="<?=h($redirectPath)?>">
@@ -142,5 +142,18 @@ include __DIR__ . '/../templates/header.php';
     </section>
   <?php endforeach; ?>
 <?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const deleteForms = document.querySelectorAll('.delete-collection-form');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!await Modal.confirm('Are you sure you want to delete this collection? This action cannot be undone.', 'danger')) return;
+            form.submit();
+        });
+    });
+});
+</script>
 
 <?php include __DIR__ . '/../templates/footer.php'; ?>

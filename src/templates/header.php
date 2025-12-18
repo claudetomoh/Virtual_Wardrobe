@@ -9,10 +9,12 @@ $isDashboard = isset($_SERVER['SCRIPT_NAME']) && str_contains($_SERVER['SCRIPT_N
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Virtual Wardrobe</title>
   <link rel="stylesheet" href="<?=h(url_path('public/css/styles.css'))?>?v=20251216" />
+  <link rel="stylesheet" href="<?=h(url_path('public/css/modal.css'))?>?v=20251218" />
   <!-- Add FontAwesome for professional icons in header and dashboard buttons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- Inter font for consistent, modern typography -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="<?=h(url_path('public/js/modal.js'))?>?v=20251218"></script>
   <meta name="csrf-token" content="<?=h(csrf_token())?>" />
   <meta name="user-id" content="<?=h($_SESSION['user_id'] ?? 0)?>" />
   <meta name="socket-server-url" content="<?=h(getenv('SOCKET_SERVER_URL') ?: 'http://localhost:3000')?>" />
