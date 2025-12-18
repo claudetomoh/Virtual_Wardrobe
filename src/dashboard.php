@@ -748,8 +748,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const maxShow = 3;
         arr.slice(0, maxShow).forEach(ev => {
           const div = document.createElement('div');
-          div.className = 'planner-card';
-          div.setAttribute('data-outfit-id', ev.extendedProps.outfit_id);
+          // Apply color class based on outfit ID
+          const outfitId = ev.extendedProps.outfit_id;
+          const colorIdx = 1 + (parseInt(outfitId) % 7);
+          div.className = 'planner-card color-' + colorIdx;
+          div.setAttribute('data-outfit-id', outfitId);
           div.setAttribute('data-plan-id', ev.id);
           div.setAttribute('data-note', ev.extendedProps?.note || '');
           const h = document.createElement('h4'); h.innerText = ev.title;
