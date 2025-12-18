@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config.php';
 requireLogin();
 
-$stmt = $pdo->prepare('SELECT *, IFNULL(is_favorite, 0) AS is_favorite FROM '. TBL_OUTFITS .' WHERE user_id = ? ORDER BY created_at DESC');
+$stmt = $pdo->prepare('SELECT *, IFNULL(is_favorite, 0) AS is_favorite FROM ' . TBL_OUTFITS . ' WHERE user_id = ? ORDER BY created_at DESC');
 $stmt->execute([$_SESSION['user_id']]);
 $outfits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -78,7 +78,7 @@ include __DIR__ . '/../templates/header.php';
                 $tags = [];
                 if (!empty($itemIds)) {
                         $ph = implode(',', array_fill(0, count($itemIds), '?'));
-                        $stmt = $pdo->prepare("SELECT name, image_path, category FROM '. TBL_CLOTHES .' WHERE id IN ($ph)");
+                        $stmt = $pdo->prepare("SELECT name, image_path, category FROM " . TBL_CLOTHES . " WHERE id IN ($ph)");
                         $stmt->execute($itemIds);
                         $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($items as $it) if (!empty($it['category'])) $tags[] = strtolower($it['category']);
