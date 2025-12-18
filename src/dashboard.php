@@ -625,11 +625,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       return !existingCard || emptyIndicator;
     });
     
-    console.log('Available outfits:', outfits.length);
+    console.log('Available outfits:', vw_outfits.length);
     console.log('Empty slots:', emptySlots.length);
     
-    if (outfits.length === 0) { 
-      window.showToast('No vw_outfits available to plan. Create some vw_outfits first!', 'info'); 
+    if (vw_outfits.length === 0) { 
+      window.showToast('No outfits available to plan. Create some outfits first!', 'info'); 
       return; 
     }
     
@@ -638,11 +638,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       return; 
     }
     
-    if (!await Modal.confirm(`Auto-plan ${Math.min(outfits.length, emptySlots.length)} outfits into empty days?`, 'success')) return;
+    if (!await Modal.confirm(`Auto-plan ${Math.min(vw_outfits.length, emptySlots.length)} outfits into empty days?`, 'success')) return;
     
     let planned = 0;
-    for (let i = 0; i < Math.min(outfits.length, emptySlots.length); i++) {
-      const outfitId = outfits[i];
+    for (let i = 0; i < Math.min(vw_outfits.length, emptySlots.length); i++) {
+      const outfitId = vw_outfits[i];
       const date = emptySlots[i].dataset.slotDate;
       
       if (!date) {
