@@ -423,7 +423,7 @@ include __DIR__ . '/templates/header.php';
   <section class="card">
     <div class="section-header">
       <h3 class="card-title">Weekly Planner</h3>
-      <p class="muted">Organize your outfits for the week ahead — drag & drop or auto-plan</p>
+      <p class="muted">Organize your outfits for the week ahead — drag, drop, or auto-plan with one click</p>
     </div>
     <?php
       $days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];

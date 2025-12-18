@@ -486,6 +486,13 @@ a:hover {
     text-transform: capitalize;
 }
 
+.planner-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.2rem;
+    align-items: start;
+}
+
 @media (max-width: 980px) {
     .planner-layout {
         grid-template-columns: 1fr;

@@ -14,7 +14,7 @@ include __DIR__ . '/../templates/header.php';
     <div>
       <p class="eyebrow">Planner</p>
       <h1 class="planner-title">Planner Calendar</h1>
-      <p class="muted">Drop vw_outfits onto the calendar to schedule your looks.</p>
+      <p class="muted">Drag outfits from your library onto the calendar to schedule your looks</p>
     </div>
     <div class="planner-actions">
       <a class="btn btn-secondary" id="backToDash" href="<?=h(url_path('src/dashboard.php'))?>">Dashboard</a>
@@ -73,7 +73,7 @@ include __DIR__ . '/../templates/header.php';
         <div>
           <p class="eyebrow">Calendar</p>
           <h3>Plan your week</h3>
-          <p class="muted small">Drop vw_outfits on any date; drag to move.</p>
+          <p class="muted small">Drop outfits on any date or drag to reschedule</p>
         </div>
       </div>
       <div class="calendar-surface">
