@@ -434,7 +434,12 @@ include __DIR__ . '/templates/header.php';
         <div class="planner-slot" data-slot-date="<?=h($date)?>">
           <p class="label"><?= $day; ?> <small style="font-weight:600; color: rgba(255,255,255,0.6); margin-left:0.5rem; font-size:0.78rem;"><?= h(date('M j', strtotime($date))) ?></small></p>
           <?php if ($slot): ?>
-            <div class="planner-card" data-outfit-id="<?= (int)$slot['outfit_id']; ?>">
+            <?php 
+              // Assign a color class based on the outfit id for visual differentiation
+              $colorIdx = 1 + ((int)$slot['outfit_id'] % 7); 
+              $colorClass = "color-$colorIdx";
+            ?>
+            <div class="planner-card <?= $colorClass ?>" data-outfit-id="<?= (int)$slot['outfit_id']; ?>">
               <h4><?= h($slot['title'] ?: 'Outfit'); ?></h4>
               <div class="planner-items">
                 <?php if ($slot['top_name']): ?><span><?= h($slot['top_name']); ?></span><?php endif; ?>
